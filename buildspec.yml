@@ -2,7 +2,7 @@ version: 0.2
 phases: 
     install: 
         runtime-versions:
-            node: 10
+            nodejs: 10
         commands: 
             - apt-get update -y && apt-get install python3-pip
             - pip3 install pipenv --user
