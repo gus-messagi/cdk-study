@@ -1,9 +1,17 @@
 version: 0.2,
 phases: 
     install: 
+        runtime-versions:
+            node: 10
         commands: 
-            - npm install
+            - apt-get update -y && apt-get install python3-pip
+            - pip3 install pipenv --user
+            - pipenv install aws-sam-cli
+    build:
+        commands:
+            - pipenv run sam build --use-container
+            - pipenv run sam package SAMArtifacts --output-template-file sam_output_template.yml
 artifacts: 
     type: zip
     files: 
-        - template.yml
+        - sam_output_template.yml
