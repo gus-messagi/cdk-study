@@ -9,7 +9,7 @@ phases:
             - pipenv install aws-sam-cli
     build:
         commands:
-            - pipenv run sam build --template template.yml --use-container
+            - pipenv run sam build --use-container
             - pipenv run sam package --s3-bucket CdkStudyBucket --s3-prefix SAMArtifacts --output-template-file sam_output_template.yml
 artifacts: 
     type: zip
