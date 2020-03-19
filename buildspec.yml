@@ -10,7 +10,7 @@ phases:
     build:
         commands:
             - pipenv run sam build --use-container
-            - pipenv run sam package --s3-bucket cdk-study-bucket --s3-prefix SAMArtifacts --output-template-file sam_output_template.yml
+            - pipenv run sam package --s3-bucket cdk-study-bucket-pipeline --s3-prefix SAMArtifacts --output-template-file sam_output_template.yml
 artifacts: 
     type: zip
     files: 
