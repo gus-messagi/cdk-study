@@ -1,11 +1,10 @@
 version: 0.2
 phases: 
     install: 
-        runtime-versions:
-            nodejs: 10
+        runtime-versions:	
             python: 3.7
-       
-	    commands: 
+            nodejs: 10
+        commands: 
             - apt-get update -y && apt-get install python3-pip
             - pip3 install pipenv --user
             - pipenv install aws-sam-cli
