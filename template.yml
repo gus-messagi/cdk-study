@@ -34,11 +34,11 @@ Resources:
             StageName: prod
             Auth:
                 Authorizers:
-                    DefaultAuthorizer: CognitoAuthorizer
                     CognitoAuthorizer:
                         AuthType: COGNITO_USER_POOLS
                         UserPoolArn: !Ref CognitoUserPoolArn
-                    AddDefaultAuthorizerToCorsPreflight: false
+                DefaultAuthorizer: CognitoAuthorizer
+                AddDefaultAuthorizerToCorsPreflight: false
     
     SendHello:
         Type: AWS::Serverless::Function
