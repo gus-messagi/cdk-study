@@ -22,7 +22,7 @@ Globals:
 
 Resources:
 
-    GatewayApi:
+    RestApi:
         Type: AWS::Serverless::Api
         Properties:
             Name: 'CdkRestApi'  
@@ -51,7 +51,7 @@ Resources:
                     Properties: 
                         Method: GET
                         Path: /hello
-                        RestApiId: !Ref GatewayApi
+                        RestApiId: !Ref RestApi
     
 
 Outputs:
