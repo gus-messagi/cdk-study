@@ -12,8 +12,6 @@ Parameters:
         Type: String
     DomainName:
         Type: String
-    CertificationArn:
-        Type: String
 
 Globals:
     Function:
@@ -60,5 +58,5 @@ Resources:
 
 Outputs:
     RestApiUrl:
-        Value: !Sub https://${DomainName}
+        Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/
         Description: API Gateway URL
