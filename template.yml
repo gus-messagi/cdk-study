@@ -1,60 +1,60 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  cdk-study
+    cdk-study
 
-  Sample SAM Template for cdk-study
+    Sample SAM Template for cdk-study
 
 Parameters:
-  CognitoUserPoolArn:
-    Type: String
-  CognitoUserPoolArn:
-    Type: String
+    CognitoUserPoolArn:
+        Type: String
+    CognitoUserPoolId:
+        Type: String
 
 Globals:
-  Function:
-    Runtime: nodejs12.x
-    Timeout: 90
-    Handler: index.handler
-    Environment:
-      Variables:
-        poolId: !Ref CognitoUserPoolId
+    Function:
+        Runtime: nodejs12.x
+        Timeout: 90
+        Handler: index.handler
+        Environment:
+            Variables:
+                poolId: !Ref CognitoUserPoolId
 
 Resources:
 
-  RestApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      Name: 'CdkRestApi'  
-      EndpointConfiguration: EDGE
-      Cors:
-        AllowHeaders: "'Content-Type, Authorization, Accept'"
-        AllowOrigin: "'*'"
-        AllowMethods: "'GET, POST, DELETE, PUT, OPTIONS'"
-      StageName: prod
-      Auth:
-        Authorizers:
-          DefaultAuthorizer: CognitoAuthorizer
-          CognitoAuthorizer:
-            AuthType: COGNITO_USER_POOLS
-            UserPoolArn: !Ref CognitoUserPoolArn
-          AddDefaultAuthorizerToCorsPreflight: false
-  
-  SendHello:
-    Type: AWS::Serverless::Function
-    Properties: 
-      FunctionName: SendHello
-      CodeUri: './handlers/sendHello/'
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties: 
-            Method: GET
-            Path: /hello
-            RestApiId: !Ref RestApi
-  
+    RestApi:
+        Type: AWS::Serverless::Api
+        Properties:
+            Name: 'CdkRestApi'  
+            EndpointConfiguration: EDGE
+            Cors:
+                AllowHeaders: "'Content-Type, Authorization, Accept'"
+                AllowOrigin: "'*'"
+                AllowMethods: "'GET, POST, DELETE, PUT, OPTIONS'"
+            StageName: prod
+            Auth:
+                Authorizers:
+                    DefaultAuthorizer: CognitoAuthorizer
+                    CognitoAuthorizer:
+                        AuthType: COGNITO_USER_POOLS
+                        UserPoolArn: !Ref CognitoUserPoolArn
+                    AddDefaultAuthorizerToCorsPreflight: false
+    
+    SendHello:
+        Type: AWS::Serverless::Function
+        Properties: 
+            FunctionName: SendHello
+            CodeUri: './handlers/sendHello/'
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties: 
+                        Method: GET
+                        Path: /hello
+                        RestApiId: !Ref RestApi
+    
 
 Outputs:
-  RestApiUrl:
-    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/
-    Description: API Gateway URL
+    RestApiUrl:
+        Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/
+        Description: API Gateway URL
