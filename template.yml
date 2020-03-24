@@ -1,35 +1,64 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  cdk-study
+    cdk-study
 
-  Sample SAM Template for cdk-study
-  
+    Sample SAM Template for cdk-study
+
+Parameters:
+    CognitoUserPoolArn:
+        Type: String
+    CognitoUserPoolId:
+        Type: String
+    DomainName:
+        Type: String
+    CertificationArn:
+        Type: String
+
 Globals:
-  Function:
-    Timeout: 3
+    Function:
+        Runtime: nodejs12.x
+        Timeout: 90
+        Handler: index.handler
+        Environment:
+            Variables:
+                poolId: !Ref CognitoUserPoolId
 
 Resources:
-  HelloWorldFunction:
-    Type: AWS::Serverless::Function 
-    Properties:
-      CodeUri: handlers/
-      Handler: index.handler
-      Runtime: nodejs12.x
-      Events:
-        HelloWorld:
-          Type: Api 
-          Properties:
-            Path: /hello
-            Method: get
+
+    GatewayApi:
+        Type: AWS::Serverless::Api
+        Properties:
+            Name: 'CdkRestApi'  
+            EndpointConfiguration: EDGE
+            Cors:
+                AllowHeaders: "'Content-Type, Authorization, Accept'"
+                AllowOrigin: "'*'"
+                AllowMethods: "'GET, POST, DELETE, PUT'"
+            StageName: prod
+            Auth:
+                Authorizers:
+                    CognitoAuthorizer:
+                        AuthType: COGNITO_USER_POOLS
+                        UserPoolArn: !Ref CognitoUserPoolArn
+                    DefaultAuthorizer: CognitoAuthorizer
+                    AddDefaultAuthorizerToCorsPreflight: false
+    
+    SendHello:
+        Type: AWS::Serverless::Function
+        Properties: 
+            FunctionName: SendHello
+            CodeUri: './handlers/sendHello/'
+            Events:
+                ApiEvent:
+                    Type: Api
+                    Properties: 
+                        Method: GET
+                        Path: /hello
+                        RestApiId: !Ref GatewayApi
+    
 
 Outputs:
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+    RestApiUrl:
+        Value: !Sub https://${DomainName}
+        Description: API Gateway URL
