@@ -10,8 +10,6 @@ Parameters:
         Type: String
     CognitoUserPoolId:
         Type: String
-    DomainName:
-        Type: String
 
 Globals:
     Function:
@@ -55,5 +53,5 @@ Resources:
 
 Outputs:
     RestApiUrl:
-        Value: !Sub https://{$DomainName}
+        Value: !Sub https://n1j9701mf1.execute-api.${AWS::Region}.amazonaws.com/prod/
         Description: API Gateway URL
