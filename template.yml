@@ -52,7 +52,6 @@ Resources:
               Resource: '*'
               Action:
                 - cognito-idp:AdminCreateUser
-                - cognito-idp:AdminAddUserToGroup
                 - cognito-idp:AdminUpdateUserAttributes
                 - ses:SendEmail
                 - mobiletargeting:*
@@ -62,6 +61,26 @@ Resources:
           Properties:
             Method: POST
             Path: /users/invite
+            RestApiId: !Ref RestApi
+    
+  GetUsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: 'CdkGetUsersFunction'
+      CodeUri: 'handlers/GetUsers'
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect:
+              Resource: '*'
+              Action:
+                - cognito-idp:ListUsers
+      Events:
+        RestApi:
+          Type: Api
+          Properties:
+            Method: GET
+            Path: /users/list
             RestApiId: !Ref RestApi
 
   
