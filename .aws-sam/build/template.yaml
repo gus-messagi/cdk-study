@@ -1,16 +1,15 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  cdk-study
+Description: 'cdk-study
 
   Sample SAM Template for cdk-study
 
+  '
 Parameters:
   CognitoUserPoolArn:
     Type: String
   CognitoUserPoolId:
     Type: String
-
 Globals:
   Function:
     Runtime: nodejs12.x
@@ -18,103 +17,102 @@ Globals:
     Handler: index.handler
     Environment:
       Variables:
-        poolId: !Ref CognitoUserPoolId
-
+        poolId:
+          Ref: CognitoUserPoolId
 Resources:
-
   RestApi:
     Type: AWS::Serverless::Api
     Properties:
-      Name: 'CdkRestApi'  
+      Name: CdkRestApi
       EndpointConfiguration: EDGE
       Cors:
-        AllowHeaders: "'Content-Type, Authorization, Accept'"
-        AllowOrigin: "'*'"
-        AllowMethods: "'GET, POST, DELETE, PUT, OPTIONS'"
+        AllowHeaders: '''Content-Type, Authorization, Accept'''
+        AllowOrigin: '''*'''
+        AllowMethods: '''GET, POST, DELETE, PUT, OPTIONS'''
       StageName: prod
       Auth:
         Authorizers:
           CognitoAuthorizer:
             AuthType: COGNITO_USER_POOLS
-            UserPoolArn: !Ref CognitoUserPoolArn
+            UserPoolArn:
+              Ref: CognitoUserPoolArn
         DefaultAuthorizer: CognitoAuthorizer
         AddDefaultAuthorizerToCorsPreflight: false
-
   MessagesTables:
     Type: AWS::Serverless::SimpleTable
     Properties:
-      TableName: 'CdkMessagesTable'
+      TableName: CdkMessagesTable
       PrimaryKey:
         Name: id
         Type: String
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
-  
   CreateUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: 'CdkCreateUserFunction'
-      CodeUri: './handlers/CreateUser'
+      FunctionName: CdkCreateUserFunction
+      CodeUri: CreateUserFunction
       Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Effect:
-              Resource: '*'
-              Action:
-                - cognito-idp:AdminCreateUser
-                - cognito-idp:AdminUpdateUserAttributes
-                - ses:SendEmail
-                - mobiletargeting:*
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: null
+          Resource: '*'
+          Action:
+          - cognito-idp:AdminCreateUser
+          - cognito-idp:AdminUpdateUserAttributes
+          - ses:SendEmail
+          - mobiletargeting:*
       Events:
         RestApi:
           Type: Api
           Properties:
             Method: POST
             Path: /users/invite
-            RestApiId: !Ref RestApi
-    
+            RestApiId:
+              Ref: RestApi
   GetUsersFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: 'CdkGetUsersFunction'
-      CodeUri: 'handlers/GetUsers'
+      FunctionName: CdkGetUsersFunction
+      CodeUri: GetUsersFunction
       Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Effect:
-              Resource: '*'
-              Action:
-                - cognito-idp:ListUsers
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: null
+          Resource: '*'
+          Action:
+          - cognito-idp:ListUsers
       Events:
         RestApi:
           Type: Api
           Properties:
             Method: GET
             Path: /users/list
-            RestApiId: !Ref RestApi
-  
+            RestApiId:
+              Ref: RestApi
   PostMessages:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: 'CdkPutMessagesFunction'
-      CodeUri: 'handlers/PostMessages'
+      FunctionName: CdkPutMessagesFunction
+      CodeUri: PostMessages
       Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Effect:
-              Resource: '*'
-              Action: 
-                - dynamodb:PutItem
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: null
+          Resource: '*'
+          Action:
+          - dynamodb:PutItem
       Events:
         RestApi:
           Type: Api
           Properties:
             Method: POST
             Path: /messages
-            RestApiId: !Ref RestApi
-
+            RestApiId:
+              Ref: RestApi
 Outputs:
   RestApiUrl:
-    Value: !Sub https://n1j9701mf1.execute-api.${AWS::Region}.amazonaws.com/prod/
+    Value:
+      Fn::Sub: https://n1j9701mf1.execute-api.${AWS::Region}.amazonaws.com/prod/
     Description: API Gateway URL
